@@ -1,0 +1,25 @@
+{
+  "name": "textrip",
+  "version": "0.1.0",
+  "description": "Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website",
+  "scripts": {
+    "setup": "./setup",
+    "server": "node server.mjs",
+    "build": "wasm-pack build --target web --out-name wasm --out-dir static/wasm"
+  },
+  "author": "Grant Handy <grantshandy@gmail.com>",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "chalk": "^4.1.0",
+    "koa": "^2.13.0",
+    "koa-router": "^9.1.0",
+    "koa-send": "^5.0.0",
+    "koa-static": "^5.0.0",
+    "koa-websocket": "^6.0.0",
+    "node-watch": "^0.6.4",
+    "opn": "^6.0.0"
+  },
+  "engines": {
+    "node": ">13"
+  }
+}

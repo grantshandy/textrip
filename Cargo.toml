@@ -1,0 +1,13 @@
+[package]
+name = "textrip"
+version = "0.1.0"
+authors = ["Grant Handy <grantshandy@gmail.com>"]
+description = "Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website"
+license = "GPL-3.0"
+repository = "https://github.com/skylinecc/textrip"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
