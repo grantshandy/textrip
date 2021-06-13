@@ -17,5 +17,5 @@ extern "C" {
 #[wasm_bindgen]
 pub fn greet(name: &str) {
   log("hi from rust");
-  alert(&format!("Hello, {}!", name));
+  alert(&format!("This alert was called from Rust\n\nHello, {}!\n\n\"{}\" was called as a parameter for this function from Javascript.", name, name));
 }
