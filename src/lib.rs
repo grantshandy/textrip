@@ -8,11 +8,14 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 extern "C" {
   fn alert(s: &str);
+  #[wasm_bindgen(js_namespace = console)]
+  fn log(s: &str);
 }
 
 // Export a `greet` function from Rust to JavaScript, that alerts a
 // hello message.
 #[wasm_bindgen]
 pub fn greet(name: &str) {
+  log("hi from rust");
   alert(&format!("Hello, {}!", name));
 }
