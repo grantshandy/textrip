@@ -24,6 +24,10 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - uses: raftario/setup-rust-action@v1
+
+      - name: Test Rust
+        run: rustc -V
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
