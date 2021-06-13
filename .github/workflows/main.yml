@@ -1,0 +1,23 @@
+name: Rust
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  compile:
+    name: Push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Setup | Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+      - name: do all the stuff...
+        run: |
+          echo stuff
+          echo bar
