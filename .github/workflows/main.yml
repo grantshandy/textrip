@@ -7,8 +7,8 @@ on:
   pull_request:
 
 jobs:
-  compile:
-    name: Push
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Setup | Checkout
@@ -17,7 +17,42 @@ jobs:
         uses: ATiltedTree/setup-rust@v1
         with:
           rust-version: stable
-      - name: do all the stuff...
-        run: |
-          echo stuff
-          echo bar
+          components: clippy
+      - name: Build | Lint
+        run: cargo clippy
+  compile:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Setup | Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: stable
+      - name: Build | Compile
+        run: cargo check
+  test:
+    name: Test
+    matrix:
+      strategy:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        - macOS-latest
+        rust:
+          - stable
+          - beta
+          - nightly
+    runs-on: ${{ matrix.os }}
+    needs: [compile]
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v2
+      - name: Setup | Rust
+        uses: ATiltedTree/setup-rust@v1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - name: Build | Compile
+        run: cargo test
+
