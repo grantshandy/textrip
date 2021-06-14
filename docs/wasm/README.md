@@ -7,5 +7,5 @@ Get perspective accurate textures for 3D modeling and graphics from any image in
 I just have this here so I can copy paste it :)
 
 ```
-wasm-pack build --target web --out-name wasm --out-dir static/wasm
+wasm-pack build --target web --out-name wasm --out-dir docs/wasm && rm docs/wasm/.gitignore
 ```
