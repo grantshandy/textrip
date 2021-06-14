@@ -34,6 +34,9 @@ jobs:
       - name: Build WASM
         run: wasm-pack build --target web --out-name wasm --out-dir static/wasm
 
+      - name: List static dir
+        run: ls -lR static
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
