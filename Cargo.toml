@@ -11,3 +11,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "0.2"
+imageproc = "0.22.0"
+image = "0.23.14"
