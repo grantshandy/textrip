@@ -1,30 +1,28 @@
-extern crate wasm_bindgen;
 extern crate image;
+extern crate wasm_bindgen;
 
 use std::io::Cursor;
 
 // use std::io::{BufReader, Read};
+use image::io::Reader as ImageReader;
 use wasm_bindgen::prelude::*;
-use image::{io::Reader as ImageReader, DynamicImage};
 
 #[wasm_bindgen]
 extern "C" {
-    fn alert(s: &str);
-    // #[wasm_bindgen(js_namespace = console)]
-    // fn log(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
 
 #[wasm_bindgen]
 pub fn resolution(bytes: &[u8]) -> String {
-  let image = ImageReader::new(Cursor::new(bytes));
+    log(&format!("rust: byte length: {}", &bytes.len()));
 
-  let (x, y) = image.into_dimensions().unwrap();
+    let image = ImageReader::new(Cursor::new(bytes));
 
-  return format!("{}, {}", x, y);
-}
+    let (x, y) = match image.into_dimensions() {
+        Ok(data) => data,
+        Err(error) => return error.to_string(),
+    };
 
-#[wasm_bindgen]
-pub fn hello_world() -> String {
-    alert("hi from rust");
-    return "got it".to_string();
+    return format!("{}, {}", x, y);
 }

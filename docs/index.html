@@ -8,22 +8,22 @@
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
-    <!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
-    <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
-    <p><img id="output" width="200" /></p> -->
+    <input type='file' id='button'>
 
     <p id="resolution"></p>
 
     <script type="module">
-      import init, {hello_world} from './wasm/wasm.js';
+      import init, {resolution} from './wasm/wasm.js';
 
       (async () => {
         await init();
 
-        var y = hello_world();
-        var x = document.getElementById('resolution');
-        
-        x.innerHTML = y;
+        let button = document.getElementById('button');
+
+        button.addEventListener('change',function(){
+          let f = this.files[0];
+          document.getElementById('resolution').innerHTML = resolution(f);
+        });
       })();
     </script>
   </body>

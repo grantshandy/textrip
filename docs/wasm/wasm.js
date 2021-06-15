@@ -52,22 +52,6 @@ export function resolution(bytes) {
     }
 }
 
-/**
-* @returns {string}
-*/
-export function hello_world() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.hello_world(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        return getStringFromWasm0(r0, r1);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-        wasm.__wbindgen_free(r0, r1);
-    }
-}
-
 async function load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
@@ -105,8 +89,8 @@ async function init(input) {
     }
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbg_alert_cec8582b71a1beff = function(arg0, arg1) {
-        alert(getStringFromWasm0(arg0, arg1));
+    imports.wbg.__wbg_log_4c8ee48a7ae1fff2 = function(arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
     };
 
     if (typeof input === 'string' || (typeof Request === 'function' && input instanceof Request) || (typeof URL === 'function' && input instanceof URL)) {
