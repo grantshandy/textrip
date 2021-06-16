@@ -11,18 +11,24 @@ use wasm_bindgen::prelude::*;
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    fn error(s: &str);
 }
 
 #[wasm_bindgen]
 pub fn resolution(bytes: &[u8]) -> String {
-    log(&format!("byte length: {}", &bytes.len()));
+    log(&format!("rust parameter byte length: {}", &bytes.len()));
 
     let image = ImageReader::new(Cursor::new(bytes));
 
     let (x, y) = match image.into_dimensions() {
         Ok(data) => data,
-        Err(error) => return error.to_string(),
+        Err(e) => {
+            let e = format!("image-rs error: {}", e);
+            error(&e);
+            return e;
+        },
     };
 
-    return format!("{}, {}", x, y);
+    return format!("image-rs: {}, {}", x, y);
 }

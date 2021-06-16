@@ -8,12 +8,8 @@
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
-    <!-- <form enctype="multipart/form-data" action="/upload/image" method="post"> -->
-      <input type='file' id='button'>
-    <!-- </form> -->
-
+    <input type='file' id='button'>
     <img id="preview">
-
     <p id="resolution"></p>
 
     <script type="module">
@@ -22,21 +18,21 @@
       (async () => {
         await init();
 
-        let button = document.getElementById('button');
+        var button = document.getElementById('button');
 
         button.addEventListener('change', (event) => {
           let file = event.target.files[0];
-          
           const reader = new FileReader();
-
           reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
             let x = reader.result;
+            // var preview = document.getElementById('preview');
+            // preview.src = x;
+
             console.log(x);
 
             let uint8view = new Uint8Array(x);
-
             let res = resolution(uint8view);
             document.getElementById('resolution').innerHTML = res;
           }
