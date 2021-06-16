@@ -25,19 +25,19 @@
         let button = document.getElementById('button');
 
         button.addEventListener('change', (event) => {
-          let fileList = event.target.files;
+          let file = event.target.files[0];
           
           const reader = new FileReader();
 
-          reader.readAsArrayBuffer(fileList[0]);
+          reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
             let x = reader.result;
             console.log(x);
 
-            let int8view = new Uint8Array(x);
+            let uint8view = new Uint8Array(x);
 
-            let res = resolution(int8view);
+            let res = resolution(uint8view);
             document.getElementById('resolution').innerHTML = res;
           }
         });

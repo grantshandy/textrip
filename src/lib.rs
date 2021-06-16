@@ -15,7 +15,7 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn resolution(bytes: &[u8]) -> String {
-    log(&format!("rust: byte length: {}", &bytes.len()));
+    log(&format!("byte length: {}", &bytes.len()));
 
     let image = ImageReader::new(Cursor::new(bytes));
 
