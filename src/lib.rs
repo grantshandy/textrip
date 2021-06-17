@@ -1,11 +1,19 @@
+#![feature(proc_macro)]
+
 extern crate image;
 extern crate wasm_bindgen;
 
+use std::fs::File;
 use std::io::Cursor;
-
-// use std::io::{BufReader, Read};
 use image::io::Reader as ImageReader;
 use wasm_bindgen::prelude::*;
+
+#[macro_use]
+extern crate stdweb;
+
+use stdweb::js_export;
+use stdweb::web::FileReader;
+use stdweb::web::FileReaderResult;
 
 #[wasm_bindgen]
 extern "C" {
@@ -15,20 +23,28 @@ extern "C" {
     fn error(s: &str);
 }
 
-#[wasm_bindgen]
-pub fn resolution(bytes: &[u8]) -> String {
-    log(&format!("rust parameter byte length: {}", &bytes.len()));
+#[js_export]
+pub fn resolution(file_reader: FileReader) -> String {
+    match file_reader.result() {
+        Some(data) => match data {
+            FileReaderResult::ArrayBuffer(value) => {
+                // let image = ImageReader::new(Cursor::new(value));
 
-    let image = ImageReader::new(Cursor::new(bytes));
+                // let (x, y) = match image.into_dimensions() {
+                //     Ok(data) => data,
+                //     Err(e) => {
+                //         let e = format!("image-rs error: {}", e);
+                //         error(&e);
+                //         return e;
+                //     },
+                // };
+            
+                // return format!("image-rs: {}, {}", x, y);
 
-    let (x, y) = match image.into_dimensions() {
-        Ok(data) => data,
-        Err(e) => {
-            let e = format!("image-rs error: {}", e);
-            error(&e);
-            return e;
-        },
+                return "got an array buffer".to_string();
+            }
+            _ => return "bad input".to_string(),
+        }
+        None => return "no input".to_string(),
     };
-
-    return format!("image-rs: {}, {}", x, y);
 }
