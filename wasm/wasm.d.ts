@@ -1,10 +1,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
-* @param {Uint8Array} bytes
+* @param {Uint8Array} value
 * @returns {string}
 */
-export function resolution(bytes: Uint8Array): string;
+export function resolution(value: Uint8Array): string;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 

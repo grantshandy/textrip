@@ -34,13 +34,13 @@ function getInt32Memory0() {
     return cachegetInt32Memory0;
 }
 /**
-* @param {Uint8Array} bytes
+* @param {Uint8Array} value
 * @returns {string}
 */
-export function resolution(bytes) {
+export function resolution(value) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        var ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        var ptr0 = passArray8ToWasm0(value, wasm.__wbindgen_malloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.resolution(retptr, ptr0, len0);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
