@@ -21,16 +21,15 @@
 
         var button = document.getElementById('button');
 
-        button.addEventListener('change', (event) => {
+        button.addEventListener('input', (event) => {
           let file = event.target.files[0];
 
-          const filename = file.name;
           const reader = new FileReader();
-          
+
           reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
-            run(new Uint8Array(reader.result));            
+            run(new Uint8Array(reader.result));
           }
         });
       })();
