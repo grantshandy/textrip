@@ -15,26 +15,19 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn foo(value: &[u8], name: &str) -> String {
-    log(&format!("bytes: {}", &value.len()));
+pub fn run(value: &[u8]) {
+    let image = ImageReader::new(Cursor::new(value)).with_guessed_format().expect("can't get imagereader from the image");
 
-    let image = match ImageReader::new(Cursor::new(value)).with_guessed_format() {
-        Ok(data) => data,
-        Err(e) => {
-            let e = format!("image-rs error: {}", e);
-            error(&e);
-            return e;
-        }
-    };
+    let (x, y) = image.into_dimensions().expect("can't get image dimensions");
+    let message = format!("({}, {})", x, y);
 
-    let (x, y) = match image.into_dimensions() {
-        Ok(data) => data,
-        Err(e) => {
-            let e = format!("image-rs error: {}", e);
-            error(&e);
-            return e;
-        }
-    };
+    log(&message);
 
-    return format!("{} - ({}, {})", name, x, y);
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let body = document.body().expect("document should have a body");
+
+    let val = document.create_element("p").expect("couldn't create p element");
+    val.set_text_content(Some("Hello from Rust!"));
+    body.append_child(&val).expect("couldn't append child");
 }

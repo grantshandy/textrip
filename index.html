@@ -14,7 +14,7 @@
     <p id="resolution"></p>
 
     <script type="module">
-      import init, {foo} from './wasm/wasm.js';
+      import init, {run} from './wasm/wasm.js';
 
       (async () => {
         await init();
@@ -30,12 +30,7 @@
           reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
-            let x = reader.result;
-            console.log(x);
-
-            let uint8view = new Uint8Array(x);
-            let res = foo(uint8view, filename);
-            document.getElementById('resolution').innerHTML = res;
+            run(new Uint8Array(reader.result));            
           }
         });
       })();

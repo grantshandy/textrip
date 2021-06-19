@@ -2,20 +2,17 @@
 /* eslint-disable */
 /**
 * @param {Uint8Array} value
-* @param {string} name
-* @returns {string}
 */
-export function foo(value: Uint8Array, name: string): string;
+export function run(value: Uint8Array): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly foo: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
+  readonly run: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
+  readonly __wbindgen_exn_store: (a: number) => void;
 }
 
 /**
