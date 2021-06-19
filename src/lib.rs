@@ -15,7 +15,7 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn resolution(value: &[u8]) -> String {
+pub fn foo(value: &[u8], name: &str) -> String {
     log(&format!("bytes: {}", &value.len()));
 
     let image = match ImageReader::new(Cursor::new(value)).with_guessed_format() {
@@ -36,5 +36,5 @@ pub fn resolution(value: &[u8]) -> String {
         }
     };
 
-    return format!("image-rs: {}, {}", x, y);
+    return format!("{} - ({}, {})", name, x, y);
 }
