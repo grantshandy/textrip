@@ -1,9 +1,10 @@
 extern crate image;
+extern crate imageproc;
 extern crate wasm_bindgen;
 extern crate web_sys;
 
-use image::io::Reader as ImageReader;
-use std::io::Cursor;
+use image::{DynamicImage, io::Reader as ImageReader};
+use std::io::{Bytes, Cursor};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -33,20 +34,25 @@ pub fn run(value: &[u8]) {
 }
 
 pub fn get_dimensions(value: &[u8]) -> String {
-        let image = ImageReader::new(Cursor::new(value))
+    let image = ImageReader::new(Cursor::new(value))
         .with_guessed_format()
         .expect("can't get imagereader from the image");
-        // .decode()
-        // .expect("couldn't decode");
-
-    // let image = match image.decode() {
-    //     Ok(data) => data,
-    //     Err(e) => {
-    //         log(&e.to_string());
-    //         std::process::exit(1);
-    //     }
-    // };
 
     let (x, y) = image.into_dimensions().unwrap();
     return format!("resolution: ({}, {})", x, y);
+}
+
+pub fn invert(value: &[u8]) -> &[u8] {
+    let image = ImageReader::new(Cursor::new(value))
+        .with_guessed_format()
+        .expect("can't get imagereader from the image");
+    
+    let mut image = match image.decode() {
+        Ok(data) => data,
+        Err(error) => panic!("{}", error),
+    };
+
+    image.invert();
+
+    return image.as_bytes();
 }

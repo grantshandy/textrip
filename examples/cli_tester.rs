@@ -1,10 +1,14 @@
 extern crate textrip;
 
-use textrip::get_dimensions;
+use std::{env::args, io::Write, path::Path};
+use textrip::invert;
 
 fn main() {
     let image = include_bytes!("test_image.jpg");
 
-    let x = get_dimensions(image);
-    println!("{}", x);
+    let x = invert(image);
+
+    let path = Path::new("/home/grant/Pictures/output.jpg");
+
+    std::fs::write(path, image);
 }
