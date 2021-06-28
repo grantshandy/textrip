@@ -6,9 +6,9 @@ use textrip::invert;
 fn main() {
     let image = include_bytes!("test_image.jpg");
 
-    let x = invert(image);
+    let inverted_image = invert(image);
 
-    let path = Path::new("/home/grant/Pictures/output.jpg");
+    let path = Path::new("test_image_inverted.jpg");
 
-    std::fs::write(path, image);
+    std::fs::write(path, inverted_image.as_slice()).unwrap();
 }

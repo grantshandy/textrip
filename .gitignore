@@ -1,3 +1,5 @@
 /target
 Cargo.lock
 /docs/wasm/.gitignore
+*jpg
+.DS_Store

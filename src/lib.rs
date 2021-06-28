@@ -1,10 +1,13 @@
 extern crate image;
 extern crate imageproc;
+extern crate js_sys;
 extern crate wasm_bindgen;
 extern crate web_sys;
 
-use image::{DynamicImage, io::Reader as ImageReader};
-use std::io::{Bytes, Cursor};
+use std::io::Cursor;
+
+use image::io::Reader as ImageReader;
+use js_sys::Uint8Array;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -16,7 +19,7 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn run(value: &[u8]) {
+pub fn run(value: &[u8]) -> Uint8Array {
     let message = get_dimensions(value);
 
     log(&message);
@@ -29,8 +32,9 @@ pub fn run(value: &[u8]) {
         .children()
         .named_item("resolution")
         .expect("couldn't find resolution");
-
     resolution.set_text_content(Some(&message));
+
+    invert(value).as_slice().into()
 }
 
 pub fn get_dimensions(value: &[u8]) -> String {
@@ -39,20 +43,21 @@ pub fn get_dimensions(value: &[u8]) -> String {
         .expect("can't get imagereader from the image");
 
     let (x, y) = image.into_dimensions().unwrap();
-    return format!("resolution: ({}, {})", x, y);
+    format!("resolution: ({}, {})", x, y)
 }
 
-pub fn invert(value: &[u8]) -> &[u8] {
+pub fn invert(value: &[u8]) -> Vec<u8> {
     let image = ImageReader::new(Cursor::new(value))
         .with_guessed_format()
         .expect("can't get imagereader from the image");
-    
     let mut image = match image.decode() {
         Ok(data) => data,
         Err(error) => panic!("{}", error),
     };
-
     image.invert();
-
-    return image.as_bytes();
+    let mut bytes: Vec<u8> = Vec::new();
+    image
+        .write_to(&mut bytes, image::ImageOutputFormat::Jpeg(50))
+        .expect("Can write to jpg");
+    bytes
 }

@@ -29,7 +29,10 @@
           reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
-            run(new Uint8Array(reader.result));
+            const invertedImage = run(new Uint8Array(reader.result));
+            const previewElem = document.getElementById('preview');
+            const blob = new Blob([invertedImage.buffer]);
+            previewElem.src = URL.createObjectURL(blob);
           }
         });
       })();

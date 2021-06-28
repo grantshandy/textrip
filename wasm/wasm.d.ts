@@ -2,14 +2,15 @@
 /* eslint-disable */
 /**
 * @param {Uint8Array} value
+* @returns {Uint8Array}
 */
-export function run(value: Uint8Array): void;
+export function run(value: Uint8Array): Uint8Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly run: (a: number, b: number) => void;
+  readonly run: (a: number, b: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
 }
