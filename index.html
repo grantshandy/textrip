@@ -26,78 +26,112 @@
         display: inline-block;
       }
 
+      #work {
+        align-items: center;
+        display: inline-block;
+      }
+
     </style>
   </head>
   <body>
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
-    <input type='file' id='button' multiple accept="image/png">
-    <canvas id="ripper" width="230" height="230"></canvas>
+    <!-- <input type='file' id='button' multiple accept="image/png"> -->
+    <br>
+    <div id="work">
+      <canvas id="ripper" width="400" height="400"></canvas>
+      <!-- <img id="preview"> -->
+    </div>
 
-    <!-- <img id="preview"> -->
-    <p id="resolution"></p>
+    <!-- <p id="resolution"></p> -->
 
     <script type="module">
       import init, {run} from './wasm/wasm.js';
 
-      var canvas = new fabric.Canvas('ripper');
+      var canvas = new fabric.Canvas('ripper', { selection: false });
 
-      var points = [{
-        x: 10, y: 10
-      }, {
-        x: 10, y: -10
-      }, {
-        x: -10, y: -10
-      },  {
-        x: -10, y: 10
-      }];
+      fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
-      var polygon = new fabric.Polygon(points, {
-        left: 50,
-        top: 50,
-        center: true,
-        fill: '#00000000',
-        strokeWidth: 1,
-        stroke: '#eeeeec',
-        scaleX: 6,
-        scaleY: 6,
-        objectCaching: false,
-        transparentCorners: false,
-        cornerColor: '#eeeeec',
-      });
-
-      canvas.add(polygon);
-
-      polygon.rotate(45);
-
-      (async () => {
-        await init();
-
-        var button = document.getElementById('button');
-
-        button.addEventListener('input', (event) => {
-          let file = event.target.files[0];
-
-          const reader = new FileReader();
-
-          reader.readAsArrayBuffer(file);
-
-          reader.onloadend = function() {
-            const bytes = new Uint8Array(reader.result);
-
-            const invertedImage = run(bytes);
-
-            const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
-
-            var image = new fabric.Image(file);
-            canvas.add(image);
-
-            // const previewElem = document.getElementById('preview');
-            // previewElem.src = URL.createObjectURL(file);
-          };
+      function makeCircle(left, top, line1, line2, line3, line4) {
+        var c = new fabric.Circle({
+          left: left,
+          top: top,
+          strokeWidth: 5,
+          radius: 12,
+          fill: '#fff',
+          stroke: '#666'
         });
-      })();
+        c.hasControls = c.hasBorders = false;
+
+        c.line1 = line1;
+        c.line2 = line2;
+        c.line3 = line3;
+        c.line4 = line4;
+
+        return c;
+      }
+
+      function makeLine(coords) {
+        return new fabric.Line(coords, {
+          fill: 'red',
+          stroke: 'red',
+          strokeWidth: 5,
+          selectable: false,
+          evented: false,
+        });
+      }
+
+      var topLine = makeLine([100, 100, 300, 100]),
+        leftLine = makeLine([100, 100, 100, 300]),
+        rightLine = makeLine([300, 300, 300, 100]),
+        bottomLine = makeLine([100, 300, 300, 300]);
+
+      canvas.add(topLine, leftLine, rightLine, bottomLine);
+
+      // canvas.add(
+      //   makeCircle(line.get('x1'), line.get('y1'), null, line),
+      //   makeCircle(line.get('x2'), line.get('y2'), line, line2, line5, line6),
+      //   makeCircle(line2.get('x2'), line2.get('y2'), line2, line3, line4),
+      //   makeCircle(line3.get('x2'), line3.get('y2'), line3),
+      //   makeCircle(line4.get('x2'), line4.get('y2'), line4),
+      //   makeCircle(line5.get('x2'), line5.get('y2'), line5),
+      //   makeCircle(line6.get('x2'), line6.get('y2'), line6)
+      // );
+
+      // canvas.on('object:moving', function(e) {
+      //   var p = e.target;
+      //   p.line1 && p.line1.set({ 'x2': p.left, 'y2': p.top });
+      //   p.line2 && p.line2.set({ 'x1': p.left, 'y1': p.top });
+      //   p.line3 && p.line3.set({ 'x1': p.left, 'y1': p.top });
+      //   p.line4 && p.line4.set({ 'x1': p.left, 'y1': p.top });
+      //   canvas.renderAll();
+      // });
+
+      // (async () => {
+      //   await init();
+
+      //   var button = document.getElementById('button');
+
+      //   button.addEventListener('input', (event) => {
+      //     let file = event.target.files[0];
+
+      //     const reader = new FileReader();
+
+      //     reader.readAsArrayBuffer(file);
+
+      //     reader.onloadend = function() {
+      //       const bytes = new Uint8Array(reader.result);
+
+      //       const invertedImage = run(bytes);
+
+      //       const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
+
+      //       const previewElem = document.getElementById('preview');
+      //       previewElem.src = URL.createObjectURL(file);
+      //     };
+      //   });
+      // })();
     </script>
   </body>
 </html>
