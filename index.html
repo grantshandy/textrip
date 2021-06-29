@@ -4,19 +4,72 @@
     <meta charset="utf-8">
     <title>Texture Ripper</title>
     <link rel="shortcut icon" type="image/png" href="icon.png"/>
+    <script src="libs/fabric.min.js"></script>
+    <style type="text/css" media="screen">
+      @import "./vulf-sans/stylesheet.css";
+
+
+      @x_color: green;
+
+      body {
+        background-color: #292929;
+        color: #eeeeec;
+        text-align: center;
+        font-family: 'Vulf Sans Embedded';
+      }
+
+      #ripper {
+        border: 1px solid #eeeeec;
+      }
+
+      .controls {
+        display: inline-block;
+      }
+
+    </style>
   </head>
   <body>
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
     <input type='file' id='button' multiple accept="image/png">
-    <br>
-    <img id="preview">
-    <br>
+    <canvas id="ripper" width="230" height="230"></canvas>
+
+    <!-- <img id="preview"> -->
     <p id="resolution"></p>
 
     <script type="module">
       import init, {run} from './wasm/wasm.js';
+
+      var canvas = new fabric.Canvas('ripper');
+
+      var points = [{
+        x: 10, y: 10
+      }, {
+        x: 10, y: -10
+      }, {
+        x: -10, y: -10
+      },  {
+        x: -10, y: 10
+      }];
+
+      var polygon = new fabric.Polygon(points, {
+        left: 50,
+        top: 50,
+        center: true,
+        fill: '#00000000',
+        strokeWidth: 1,
+        stroke: '#eeeeec',
+        scaleX: 6,
+        scaleY: 6,
+        objectCaching: false,
+        transparentCorners: false,
+        cornerColor: '#eeeeec',
+      });
+
+      canvas.add(polygon);
+
+      polygon.rotate(45);
 
       (async () => {
         await init();
@@ -34,14 +87,17 @@
             const bytes = new Uint8Array(reader.result);
 
             const invertedImage = run(bytes);
-            const previewElem = document.getElementById('preview');
 
             const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
 
-            previewElem.src = URL.createObjectURL(file);
+            var image = new fabric.Image(file);
+            canvas.add(image);
+
+            // const previewElem = document.getElementById('preview');
+            // previewElem.src = URL.createObjectURL(file);
           };
         });
-      })(); 
+      })();
     </script>
   </body>
 </html>
