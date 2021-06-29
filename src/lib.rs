@@ -50,14 +50,18 @@ pub fn invert(value: &[u8]) -> Vec<u8> {
     let image = ImageReader::new(Cursor::new(value))
         .with_guessed_format()
         .expect("can't get imagereader from the image");
+
     let mut image = match image.decode() {
         Ok(data) => data,
         Err(error) => panic!("{}", error),
     };
+
     image.invert();
+
     let mut bytes: Vec<u8> = Vec::new();
     image
-        .write_to(&mut bytes, image::ImageOutputFormat::Jpeg(50))
-        .expect("Can write to jpg");
-    bytes
+        .write_to(&mut bytes, image::ImageOutputFormat::Png)
+        .expect("Can write to png");
+
+    return bytes;
 }

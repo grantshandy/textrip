@@ -9,8 +9,10 @@
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
-    <input type='file' id='button' multiple accept="image/*">
+    <input type='file' id='button' multiple accept="image/png">
+    <br>
     <img id="preview">
+    <br>
     <p id="resolution"></p>
 
     <script type="module">
@@ -29,13 +31,17 @@
           reader.readAsArrayBuffer(file);
 
           reader.onloadend = function() {
-            const invertedImage = run(new Uint8Array(reader.result));
+            const bytes = new Uint8Array(reader.result);
+
+            const invertedImage = run(bytes);
             const previewElem = document.getElementById('preview');
-            const blob = new Blob([invertedImage.buffer]);
-            previewElem.src = URL.createObjectURL(blob);
-          }
+
+            const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
+
+            previewElem.src = URL.createObjectURL(file);
+          };
         });
-      })();
+      })(); 
     </script>
   </body>
 </html>
