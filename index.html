@@ -8,9 +8,6 @@
     <style type="text/css" media="screen">
       @import "./vulf-sans/stylesheet.css";
 
-
-      @x_color: green;
-
       body {
         background-color: #292929;
         color: #eeeeec;
@@ -53,7 +50,7 @@
 
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
-      function makeCircle(left, top, line1, line2, line3, line4) {
+      function makeCircle(left, top, line1, line2) {
         var c = new fabric.Circle({
           left: left,
           top: top,
@@ -66,8 +63,6 @@
 
         c.line1 = line1;
         c.line2 = line2;
-        c.line3 = line3;
-        c.line4 = line4;
 
         return c;
       }
@@ -81,17 +76,36 @@
         });
       }
 
-      var topLine = makeLine([100, 100, 300, 100]),
-        leftLine = makeLine([100, 100, 100, 300]),
-        rightLine = makeLine([300, 300, 300, 100]),
-        bottomLine = makeLine([100, 300, 300, 300]);
+      var topLine = makeLine([100, 100, 300, 100]);
+        // leftLine = makeLine([100, 100, 100, 300]);
+        // rightLine = makeLine([300, 300, 300, 100]),
+        // bottomLine = makeLine([100, 300, 300, 300]);
 
-      canvas.add(topLine, leftLine, rightLine, bottomLine);
+      canvas.add(topLine);
+      // canvas.add(leftLine);
 
-      canvas.add(makeCircle(topLine.get('x1'), topLine.get('y1'), null, topLine));
-      canvas.add(makeCircle(topLine.get('x2'), topLine.get('y2'), null, topLine));
-      canvas.add(makeCircle(bottomLine.get('x1'), bottomLine.get('y1'), null, bottomLine));
-      canvas.add(makeCircle(bottomLine.get('x2'), bottomLine.get('y2'), null, bottomLine));
+      var topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, null);
+      var topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), null, topLine);
+      // var bottomLeftCirlce = makeCircle(leftLine.get('x2'), leftLine.get('y2'), leftLine, topLine);
+
+      canvas.add(topLeftCircle);
+      canvas.add(topRightCircle);
+      // canvas.add(bottomLeftCirlce);
+
+      canvas.on('object:moving', function(e) {
+        var p = e.target;
+        p.line1 && p.line1.set({
+          x1: p.left,
+          y1: p.top,
+        });
+
+        p.line2 && p.line2.set({
+          x2: p.left,
+          y2: p.top,
+        });
+
+        canvas.renderAll();
+      });
 
 
       // (async () => {
