@@ -44,9 +44,9 @@
     <p id="resolution"></p>
 
     <script type="module">
-      import init, {run} from './wasm/wasm.js';
+      import init, {run, image_width, image_height} from './wasm/wasm.js';
 
-      var canvas = new fabric.Canvas('ripper', { selection: false });
+      const canvas = new fabric.Canvas('ripper', { selection: false });
 
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
@@ -130,6 +130,18 @@
             const invertedImage = run(bytes);
 
             const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
+
+            const image = new fabric.Image();
+            image.setSrc(URL.createObjectURL(file));
+            
+            image.width = image_width(bytes);
+            image.height = image_height(bytes);
+
+            canvas.setDimensions({width:image.width, height:image.height});
+
+            canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas));
+
+            canvas.renderAll();
 
             const previewElem = document.getElementById('preview');
             previewElem.src = URL.createObjectURL(file);

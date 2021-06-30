@@ -50,6 +50,28 @@ pub fn get_dimensions(value: &[u8]) -> String {
     format!("resolution: ({}, {})", x, y)
 }
 
+#[wasm_bindgen]
+pub fn image_width(value: &[u8]) -> String {
+    let image = ImageReader::new(Cursor::new(value))
+        .with_guessed_format()
+        .expect("can't get imagereader from the image");
+
+    let (x, _) = image.into_dimensions().unwrap();
+
+    return x.to_string();
+}
+
+#[wasm_bindgen]
+pub fn image_height(value: &[u8]) -> String {
+    let image = ImageReader::new(Cursor::new(value))
+        .with_guessed_format()
+        .expect("can't get imagereader from the image");
+
+    let (_, y) = image.into_dimensions().unwrap();
+
+    return y.to_string();
+}
+
 pub fn invert(value: &[u8]) -> Vec<u8> {
     let image = ImageReader::new(Cursor::new(value))
         .with_guessed_format()
