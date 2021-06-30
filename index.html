@@ -50,14 +50,14 @@
 
       fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
-      function makeCircle(color, left, top, line1, line2) {
+      function makeCircle(left, top, line1, line2) {
         var c = new fabric.Circle({
           left: left,
           top: top,
-          strokeWidth: 5,
+          strokeWidth: 2,
           radius: 12,
-          fill: color,
-          stroke: '#666'
+          fill: '#292929',
+          stroke: '#eeeeec'
         });
         c.hasControls = c.hasBorders = false;
 
@@ -70,27 +70,26 @@
       function makeLine(coords) {
         return new fabric.Line(coords, {
           stroke: '#eeeeec',
-          strokeWidth: 5,
+          strokeWidth: 2,
           selectable: false,
           evented: false,
         });
       }
 
-      var topLine = makeLine([100, 100, 300, 100]),
-        leftLine = makeLine([100, 100, 100, 300]),
-        rightLine = makeLine([300, 300, 300, 100]),
-        bottomLine = makeLine([100, 300, 300, 300]);
+      var topLine = makeLine([100, 100, 300, 100]);
+      var leftLine = makeLine([100, 300, 100, 100]);
+      var rightLine = makeLine([300, 100, 300, 300]);
+      var bottomLine = makeLine([300, 300, 100, 300]);
 
       canvas.add(topLine);
       canvas.add(leftLine);
       canvas.add(rightLine);
       canvas.add(bottomLine);
 
-      var topLeftCircle = makeCircle('blue', topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
-      var topRightCircle = makeCircle('black', topLine.get('x2'), topLine.get('y2'), null, topLine);
-
-      var bottomLeftCircle = makeCircle('green', leftLine.get('x2'), leftLine.get('y2'), leftLine, bottomLine);
-      var bottomRightCircle = makeCircle('red', rightLine.get('x1'), rightLine.get('y1'), null, rightLine);
+      var topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
+      var topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
+      var bottomLeftCircle = makeCircle(leftLine.get('x1'), leftLine.get('y1'), leftLine, bottomLine);
+      var bottomRightCircle = makeCircle(rightLine.get('x2'), rightLine.get('y2'), bottomLine, rightLine);
 
       canvas.add(topLeftCircle);
       canvas.add(topRightCircle);
