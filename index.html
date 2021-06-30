@@ -34,14 +34,14 @@
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
     
-    <!-- <input type='file' id='button' multiple accept="image/png"> -->
+    <input type='file' id='button' multiple accept="image/png">
     <br>
     <div id="work">
       <canvas id="ripper" width="400" height="400"></canvas>
-      <!-- <img id="preview"> -->
+      <img id="preview">
     </div>
 
-    <!-- <p id="resolution"></p> -->
+    <p id="resolution"></p>
 
     <script type="module">
       import init, {run} from './wasm/wasm.js';
@@ -112,30 +112,30 @@
       });
 
 
-      // (async () => {
-      //   await init();
+      (async () => {
+        await init();
 
-      //   var button = document.getElementById('button');
+        var button = document.getElementById('button');
 
-      //   button.addEventListener('input', (event) => {
-      //     let file = event.target.files[0];
+        button.addEventListener('input', (event) => {
+          let file = event.target.files[0];
 
-      //     const reader = new FileReader();
+          const reader = new FileReader();
 
-      //     reader.readAsArrayBuffer(file);
+          reader.readAsArrayBuffer(file);
 
-      //     reader.onloadend = function() {
-      //       const bytes = new Uint8Array(reader.result);
+          reader.onloadend = function() {
+            const bytes = new Uint8Array(reader.result);
 
-      //       const invertedImage = run(bytes);
+            const invertedImage = run(bytes);
 
-      //       const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
+            const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
 
-      //       const previewElem = document.getElementById('preview');
-      //       previewElem.src = URL.createObjectURL(file);
-      //     };
-      //   });
-      // })();
+            const previewElem = document.getElementById('preview');
+            previewElem.src = URL.createObjectURL(file);
+          };
+        });
+      })();
     </script>
   </body>
 </html>

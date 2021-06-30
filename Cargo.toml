@@ -24,5 +24,6 @@ features = [
   'Node',
   'Window',
   'HtmlCollection',
-  'HtmlImageElement'
+  'HtmlImageElement',
+  'File'
 ]

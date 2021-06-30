@@ -8,6 +8,7 @@ use std::io::Cursor;
 
 use image::io::Reader as ImageReader;
 use js_sys::Uint8Array;
+use web_sys::File;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -34,7 +35,10 @@ pub fn run(value: &[u8]) -> Uint8Array {
         .expect("couldn't find resolution");
     resolution.set_text_content(Some(&message));
 
-    invert(value).as_slice().into()
+    let value: Uint8Array = invert(value).as_slice().into();
+    // let file = File::new_with_u8_array_sequence(value, "output.png").unwrap();
+
+    return value;
 }
 
 pub fn get_dimensions(value: &[u8]) -> String {
