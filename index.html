@@ -76,20 +76,25 @@
         });
       }
 
-      var topLine = makeLine([100, 100, 300, 100]);
-      var leftLine = makeLine([100, 300, 100, 100]);
-      var rightLine = makeLine([300, 100, 300, 300]);
-      var bottomLine = makeLine([300, 300, 100, 300]);
+      var topHeight = (canvas.height / 4) * 3;
+      var bottomHeight = canvas.height / 4;
+      var rightWidth = (canvas.width / 4) * 3;
+      var leftWidth = canvas.width / 4;
+
+      const topLine = makeLine([bottomHeight, leftWidth, topHeight, leftWidth]);
+      const leftLine = makeLine([bottomHeight, rightWidth, bottomHeight, leftWidth]);
+      const rightLine = makeLine([topHeight, leftWidth, topHeight, rightWidth]);
+      const bottomLine = makeLine([topHeight, rightWidth, bottomHeight, rightWidth]);
 
       canvas.add(topLine);
       canvas.add(leftLine);
       canvas.add(rightLine);
       canvas.add(bottomLine);
 
-      var topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
-      var topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
-      var bottomLeftCircle = makeCircle(leftLine.get('x1'), leftLine.get('y1'), leftLine, bottomLine);
-      var bottomRightCircle = makeCircle(rightLine.get('x2'), rightLine.get('y2'), bottomLine, rightLine);
+      const topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
+      const topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
+      const bottomLeftCircle = makeCircle(leftLine.get('x1'), leftLine.get('y1'), leftLine, bottomLine);
+      const bottomRightCircle = makeCircle(rightLine.get('x2'), rightLine.get('y2'), bottomLine, rightLine);
 
       canvas.add(topLeftCircle);
       canvas.add(topRightCircle);
@@ -127,9 +132,7 @@
           reader.onloadend = function() {
             const bytes = new Uint8Array(reader.result);
 
-            const invertedImage = run(bytes);
-
-            const file = new File([invertedImage.buffer], "output.png", {type: 'image/png'});
+            const file = new File([bytes.buffer], "output.png", {type: 'image/png'});
 
             const image = new fabric.Image();
             image.setSrc(URL.createObjectURL(file));
@@ -137,14 +140,18 @@
             image.width = image_width(bytes);
             image.height = image_height(bytes);
 
-            canvas.setDimensions({width:image.width, height:image.height});
+            canvas.setDimensions({width: image.width, height: image.height});
+            canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
+              left: image.width / 2,
+              top: image.height / 2,
+            });
 
-            canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas));
+            var topHeight = (canvas.height / 4) * 3;
+            var bottomHeight = canvas.height / 4;
+            var rightWidth = (canvas.width / 4) * 3;
+            var leftWidth = canvas.width / 4;
 
             canvas.renderAll();
-
-            const previewElem = document.getElementById('preview');
-            previewElem.src = URL.createObjectURL(file);
           };
         });
       })();
