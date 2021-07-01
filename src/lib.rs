@@ -8,7 +8,6 @@ use std::io::Cursor;
 
 use image::io::Reader as ImageReader;
 use js_sys::Uint8Array;
-use web_sys::File;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -21,7 +20,12 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn run(value: &[u8]) -> Uint8Array {
-    let message = get_dimensions(value);
+    let dimensions = get_dimensions(value);
+
+    let x = dimensions.width;
+    let y = dimensions.height;
+
+    let message = format!("({}, {})", x, y);
 
     log(&message);
 
@@ -41,35 +45,15 @@ pub fn run(value: &[u8]) -> Uint8Array {
     return value;
 }
 
-pub fn get_dimensions(value: &[u8]) -> String {
-    let image = ImageReader::new(Cursor::new(value))
-        .with_guessed_format()
-        .expect("can't get imagereader from the image");
-
-    let (x, y) = image.into_dimensions().unwrap();
-    format!("resolution: ({}, {})", x, y)
-}
-
 #[wasm_bindgen]
-pub fn image_width(value: &[u8]) -> String {
+pub fn get_dimensions(value: &[u8]) -> Resolution {
     let image = ImageReader::new(Cursor::new(value))
         .with_guessed_format()
         .expect("can't get imagereader from the image");
 
-    let (x, _) = image.into_dimensions().unwrap();
-
-    return x.to_string();
-}
-
-#[wasm_bindgen]
-pub fn image_height(value: &[u8]) -> String {
-    let image = ImageReader::new(Cursor::new(value))
-        .with_guessed_format()
-        .expect("can't get imagereader from the image");
-
-    let (_, y) = image.into_dimensions().unwrap();
-
-    return y.to_string();
+    let (width, height) = image.into_dimensions().unwrap();
+    
+    return Resolution { width, height };
 }
 
 pub fn invert(value: &[u8]) -> Vec<u8> {
@@ -90,4 +74,10 @@ pub fn invert(value: &[u8]) -> Vec<u8> {
         .expect("Can write to png");
 
     return bytes;
+}
+
+#[wasm_bindgen]
+pub struct Resolution {
+    pub width: u32,
+    pub height: u32,
 }

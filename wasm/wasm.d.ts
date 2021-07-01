@@ -7,25 +7,35 @@
 export function run(value: Uint8Array): Uint8Array;
 /**
 * @param {Uint8Array} value
-* @returns {string}
+* @returns {Resolution}
 */
-export function image_width(value: Uint8Array): string;
+export function get_dimensions(value: Uint8Array): Resolution;
 /**
-* @param {Uint8Array} value
-* @returns {string}
 */
-export function image_height(value: Uint8Array): string;
+export class Resolution {
+  free(): void;
+/**
+* @returns {number}
+*/
+  height: number;
+/**
+* @returns {number}
+*/
+  width: number;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly run: (a: number, b: number) => number;
-  readonly image_width: (a: number, b: number, c: number) => void;
-  readonly image_height: (a: number, b: number, c: number) => void;
+  readonly get_dimensions: (a: number, b: number) => number;
+  readonly __wbg_resolution_free: (a: number) => void;
+  readonly __wbg_get_resolution_width: (a: number) => number;
+  readonly __wbg_set_resolution_width: (a: number, b: number) => void;
+  readonly __wbg_get_resolution_height: (a: number) => number;
+  readonly __wbg_set_resolution_height: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
-  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_exn_store: (a: number) => void;
 }
 

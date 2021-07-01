@@ -44,7 +44,7 @@
     <p id="resolution"></p>
 
     <script type="module">
-      import init, {run, image_width, image_height} from './wasm/wasm.js';
+      import init, {run, get_dimensions} from './wasm/wasm.js';
 
       const canvas = new fabric.Canvas('ripper', { selection: false });
 
@@ -55,7 +55,7 @@
           left: left,
           top: top,
           strokeWidth: 2,
-          radius: 12,
+          radius: 6,
           fill: '#292929',
           stroke: '#eeeeec'
         });
@@ -93,8 +93,8 @@
 
       const topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
       const topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
-      const bottomLeftCircle = makeCircle(leftLine.get('x1'), leftLine.get('y1'), leftLine, bottomLine);
-      const bottomRightCircle = makeCircle(rightLine.get('x2'), rightLine.get('y2'), bottomLine, rightLine);
+      const bottomLeftCircle = makeCircle(bottomLine.get('x2'), bottomLine.get('y2'), leftLine, bottomLine);
+      const bottomRightCircle = makeCircle(bottomLine.get('x1'), bottomLine.get('y1'), bottomLine, rightLine);
 
       canvas.add(topLeftCircle);
       canvas.add(topRightCircle);
@@ -116,7 +116,6 @@
         canvas.renderAll();
       });
 
-
       (async () => {
         await init();
 
@@ -137,19 +136,19 @@
             const image = new fabric.Image();
             image.setSrc(URL.createObjectURL(file));
             
-            image.width = image_width(bytes);
-            image.height = image_height(bytes);
+            let resolution = get_dimensions(bytes);
+
+            image.width = resolution.width;
+            image.height = resolution.height;
 
             canvas.setDimensions({width: image.width, height: image.height});
+
+            canvas.renderAll();
+
             canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
               left: image.width / 2,
               top: image.height / 2,
             });
-
-            var topHeight = (canvas.height / 4) * 3;
-            var bottomHeight = canvas.height / 4;
-            var rightWidth = (canvas.width / 4) * 3;
-            var leftWidth = canvas.width / 4;
 
             canvas.renderAll();
           };
