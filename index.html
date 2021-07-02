@@ -76,30 +76,54 @@
         });
       }
 
-      var topHeight = (canvas.height / 4) * 3;
-      var bottomHeight = canvas.height / 4;
-      var rightWidth = (canvas.width / 4) * 3;
-      var leftWidth = canvas.width / 4;
+      const canvasObjects = [];
 
-      const topLine = makeLine([bottomHeight, leftWidth, topHeight, leftWidth]);
-      const leftLine = makeLine([bottomHeight, rightWidth, bottomHeight, leftWidth]);
-      const rightLine = makeLine([topHeight, leftWidth, topHeight, rightWidth]);
-      const bottomLine = makeLine([topHeight, rightWidth, bottomHeight, rightWidth]);
+      function addToCanvas(fabricObject) {
+        canvas.add(fabricObject);
+        canvasObjects.push(fabricObject);
+      }
 
-      canvas.add(topLine);
-      canvas.add(leftLine);
-      canvas.add(rightLine);
-      canvas.add(bottomLine);
+      function clearCanvasObjects() {
+        canvasObjects.forEach(function (canvasObject) {
+          canvas.remove(canvasObject);
+        });
+      }
 
-      const topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
-      const topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
-      const bottomLeftCircle = makeCircle(bottomLine.get('x2'), bottomLine.get('y2'), leftLine, bottomLine);
-      const bottomRightCircle = makeCircle(bottomLine.get('x1'), bottomLine.get('y1'), bottomLine, rightLine);
+      function initializeControls(width, height) {
+        clearCanvasObjects();
 
-      canvas.add(topLeftCircle);
-      canvas.add(topRightCircle);
-      canvas.add(bottomLeftCircle);
-      canvas.add(bottomRightCircle);
+        var topHeight = height / 4;
+        var bottomHeight = (height / 4) * 3;
+        var rightWidth = (width / 4) * 3;
+        var leftWidth = width / 4;
+
+        console.log('initializeControls dimensions:');
+        console.log(leftWidth, rightWidth, topHeight, bottomHeight);
+        console.log(width, height);
+        console.log(canvas.width, canvas.height);
+
+        const topLine = makeLine([topHeight, leftWidth, topHeight, rightWidth]);
+        const rightLine = makeLine([topHeight, rightWidth, bottomHeight, rightWidth]);
+        const bottomLine = makeLine([bottomHeight, rightWidth, bottomHeight, leftWidth]);
+        const leftLine = makeLine([bottomHeight, leftWidth, topHeight, leftWidth]);
+
+        addToCanvas(topLine);
+        addToCanvas(leftLine);
+        addToCanvas(rightLine);
+        addToCanvas(bottomLine);
+
+        const topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
+        const topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
+        const bottomLeftCircle = makeCircle(bottomLine.get('x2'), bottomLine.get('y2'), leftLine, bottomLine);
+        const bottomRightCircle = makeCircle(bottomLine.get('x1'), bottomLine.get('y1'), bottomLine, rightLine);
+
+        addToCanvas(topLeftCircle);
+        addToCanvas(topRightCircle);
+        addToCanvas(bottomLeftCircle);
+        addToCanvas(bottomRightCircle);
+
+        canvas.renderAll();
+      }
 
       canvas.on('object:moving', function(e) {
         var p = e.target;
@@ -119,6 +143,8 @@
       (async () => {
         await init();
 
+        initializeControls(canvas.width, canvas.height);
+
         var button = document.getElementById('button');
 
         button.addEventListener('input', (event) => {
@@ -133,24 +159,14 @@
 
             const file = new File([bytes.buffer], "output.png", {type: 'image/png'});
 
-            const image = new fabric.Image();
-            image.setSrc(URL.createObjectURL(file));
-            
             let resolution = get_dimensions(bytes);
-
-            image.width = resolution.width;
-            image.height = resolution.height;
-
-            canvas.setDimensions({width: image.width, height: image.height});
-
-            canvas.renderAll();
-
-            canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
-              left: image.width / 2,
-              top: image.height / 2,
+            fabric.Image.fromURL(URL.createObjectURL(file), function (image) {
+              canvas.setDimensions({width: resolution.width, height: resolution.height});
+              canvas.setBackgroundImage(image, function () { initializeControls(resolution.width, resolution.height) }, {
+                originX: 'left',
+                originY: 'top'
+              });
             });
-
-            canvas.renderAll();
           };
         });
       })();
