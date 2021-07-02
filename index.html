@@ -97,15 +97,10 @@
         var rightWidth = (width / 4) * 3;
         var leftWidth = width / 4;
 
-        console.log('initializeControls dimensions:');
-        console.log(leftWidth, rightWidth, topHeight, bottomHeight);
-        console.log(width, height);
-        console.log(canvas.width, canvas.height);
-
-        const topLine = makeLine([topHeight, leftWidth, topHeight, rightWidth]);
-        const rightLine = makeLine([topHeight, rightWidth, bottomHeight, rightWidth]);
-        const bottomLine = makeLine([bottomHeight, rightWidth, bottomHeight, leftWidth]);
-        const leftLine = makeLine([bottomHeight, leftWidth, topHeight, leftWidth]);
+        const topLine = makeLine([leftWidth, topHeight, rightWidth, topHeight]);
+        const rightLine = makeLine([rightWidth, topHeight, rightWidth, bottomHeight]);
+        const bottomLine = makeLine([rightWidth, bottomHeight, leftWidth, bottomHeight]);
+        const leftLine = makeLine([leftWidth, bottomHeight, leftWidth, topHeight]);
 
         addToCanvas(topLine);
         addToCanvas(leftLine);
