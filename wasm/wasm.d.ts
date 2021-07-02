@@ -11,6 +11,10 @@ export function run(value: Uint8Array): Uint8Array;
 */
 export function get_dimensions(value: Uint8Array): Resolution;
 /**
+* @param {Array<any>} value
+*/
+export function print_points(value: Array<any>): void;
+/**
 */
 export class Resolution {
   free(): void;
@@ -30,12 +34,14 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly run: (a: number, b: number) => number;
   readonly get_dimensions: (a: number, b: number) => number;
+  readonly print_points: (a: number) => void;
   readonly __wbg_resolution_free: (a: number) => void;
   readonly __wbg_get_resolution_width: (a: number) => number;
   readonly __wbg_set_resolution_width: (a: number, b: number) => void;
   readonly __wbg_get_resolution_height: (a: number) => number;
   readonly __wbg_set_resolution_height: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_exn_store: (a: number) => void;
 }
 

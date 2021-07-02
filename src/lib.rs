@@ -8,6 +8,7 @@ use std::io::Cursor;
 
 use image::io::Reader as ImageReader;
 use js_sys::Uint8Array;
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -54,6 +55,17 @@ pub fn get_dimensions(value: &[u8]) -> Resolution {
     let (width, height) = image.into_dimensions().unwrap();
     
     return Resolution { width, height };
+}
+
+#[wasm_bindgen]
+pub fn print_points(value: Array) {
+    let value = value.to_vec();
+
+    for x in value {
+        let array = Array::from(&x);
+
+        
+    }
 }
 
 pub fn invert(value: &[u8]) -> Vec<u8> {
