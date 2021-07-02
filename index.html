@@ -44,7 +44,7 @@
     <p id="resolution"></p>
 
     <script type="module">
-      import init, {run, get_dimensions} from './wasm/wasm.js';
+      import init, {run, get_dimensions, print_points} from './wasm/wasm.js';
 
       const canvas = new fabric.Canvas('ripper', { selection: false });
 
@@ -116,6 +116,15 @@
         canvas.renderAll();
       });
 
+      function getPoints() {
+        var topLeft = [topLeftCircle.left, topLeftCircle.top];
+        var topRight = [topRightCircle.left, topRightCircle.top];
+        var bottomLeft = [bottomLeftCircle.left, bottomLeftCircle.top];
+        var bottomRight = [bottomRightCircle.left, bottomRightCircle.top];
+
+        print_points([topLeft, topRight, bottomLeft, bottomRight]);
+      }
+
       (async () => {
         await init();
 
@@ -140,6 +149,8 @@
 
             image.width = resolution.width;
             image.height = resolution.height;
+
+            getPoints();
 
             canvas.setDimensions({width: image.width, height: image.height});
 
