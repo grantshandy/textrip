@@ -4,12 +4,12 @@ extern crate js_sys;
 extern crate wasm_bindgen;
 extern crate web_sys;
 
-use wasm_bindgen::prelude::*;
 use std::io::Cursor;
+use wasm_bindgen::prelude::*;
 
-use imageproc::geometric_transformations::{Projection, warp, Interpolation};
-use image::{Rgb, DynamicImage};
 use image::io::Reader as ImageReader;
+use image::{DynamicImage, Rgba};
+use imageproc::geometric_transformations::{warp, Interpolation, Projection};
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,23 +21,11 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Coords) -> Vec<u8> {
-    let image = match ImageReader::new(Cursor::new(image_bytes))
-        .with_guessed_format() {
-            Ok(data) => data,
-            Err(e) => {
-                log(&format!("{}", e));
-                panic!("");
-            }
-        };
-
-
-    let image = match image.decode() {
-            Ok(data) => data,
-            Err(e) => {
-                log(&format!("{}", e));
-                panic!("");
-            }
-        };
+    let image = ImageReader::new(Cursor::new(image_bytes))
+        .with_guessed_format()
+        .unwrap()
+        .decode()
+        .unwrap();
 
     let x_coords = [c1.x, c2.x, c3.x, c4.x];
     let y_coords = [c1.y, c2.y, c3.y, c4.y];
@@ -50,40 +38,38 @@ pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
     let height = max_y - min_y;
     let cropped_image = image.crop_imm(*min_x, *min_y, width, height);
 
-    let image_buffer = match cropped_image.as_rgb8() {
-        Some(data) => data,
-        None => {
-            log("error creating the buffer");
-            panic!("");
-        }
-    };
+    let image_buffer = cropped_image.as_rgba8().unwrap();
 
-    log(&format!("from ({}, {}) ({}, {}) ({}, {}) ({}, {})", c1.x, c1.y, c2.x, c2.y, c3.x, c3.y, c4.x, c4.y));
-    log(&format!("to ({}, {}) ({}, {}) ({}, {}) ({}, {})", min_x, max_y, max_x, max_y, max_x, min_y, min_x, min_x));
-
-
-    let projection = match Projection::from_control_points(
-        [(c1.x as f32, c1.y as f32), (c2.x as f32, c2.y as f32), (c3.x as f32, c3.y as f32), (c4.x as f32, c4.y as f32)],
-        [(*min_x as f32, *max_y as f32), (*max_x as f32, *max_y as f32), (*max_x as f32, *min_y as f32), (*min_x as f32, *min_x as f32)]
-    ) {
-        Some(data) => data,
-        None => {
-            log("error creating the Projection");
-            panic!("");
-        }
-    };
+    // [top-left, top-right, bottom-left, bottom-right]
+    let projection = Projection::from_control_points(
+        [
+            (c1.x as f32, c1.y as f32),
+            (c2.x as f32, c2.y as f32),
+            (c3.x as f32, c3.y as f32),
+            (c4.x as f32, c4.y as f32),
+        ],
+        [
+            (*min_x as f32, *min_y as f32),
+            (*max_x as f32, *min_y as f32),
+            (*min_x as f32, *max_y as f32),
+            (*max_x as f32, *max_y as f32),
+        ],
+    )
+    .unwrap();
 
     let warped_image = warp(
         &image_buffer,
         &projection,
         Interpolation::Nearest,
-        Rgb([0, 0, 0])
+        Rgba([0, 0, 0, 0]),
     );
 
-    // let warped_image = DynamicImage::ImageRgb8(warped_image);
+    let warped_image = DynamicImage::ImageRgba8(warped_image);
 
     let mut bytes: Vec<u8> = Vec::new();
-    // warped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
+    warped_image
+        .write_to(&mut bytes, image::ImageOutputFormat::Png)
+        .expect("Can write to png");
     bytes
 }
 
