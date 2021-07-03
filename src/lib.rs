@@ -57,6 +57,11 @@ pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
             panic!("");
         }
     };
+
+    log(&format!("from ({}, {}) ({}, {}) ({}, {}) ({}, {})", c1.x, c1.y, c2.x, c2.y, c3.x, c3.y, c4.x, c4.y));
+    log(&format!("to ({}, {}) ({}, {}) ({}, {}) ({}, {})", min_x, max_y, max_x, max_y, max_x, min_y, min_x, min_x));
+
+
     let projection = match Projection::from_control_points(
         [(c1.x as f32, c1.y as f32), (c2.x as f32, c2.y as f32), (c3.x as f32, c3.y as f32), (c4.x as f32, c4.y as f32)],
         [(*min_x as f32, *max_y as f32), (*max_x as f32, *max_y as f32), (*max_x as f32, *min_y as f32), (*min_x as f32, *min_x as f32)]
@@ -75,10 +80,10 @@ pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
         Rgb([0, 0, 0])
     );
 
-    let warped_image = DynamicImage::ImageRgb8(warped_image);
+    // let warped_image = DynamicImage::ImageRgb8(warped_image);
 
     let mut bytes: Vec<u8> = Vec::new();
-    warped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
+    // warped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
     bytes
 }
 

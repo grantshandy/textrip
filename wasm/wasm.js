@@ -235,8 +235,8 @@ async function init(input) {
     }
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbg_error_11bf21ae6bb43394 = function(arg0, arg1) {
-        console.error(getStringFromWasm0(arg0, arg1));
+    imports.wbg.__wbg_log_4c8ee48a7ae1fff2 = function(arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
     };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
