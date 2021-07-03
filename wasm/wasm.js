@@ -1,26 +1,6 @@
 
 let wasm;
 
-const heap = new Array(32).fill(undefined);
-
-heap.push(undefined, null, true, false);
-
-function getObject(idx) { return heap[idx]; }
-
-let heap_next = heap.length;
-
-function dropObject(idx) {
-    if (idx < 36) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
-}
-
-function takeObject(idx) {
-    const ret = getObject(idx);
-    dropObject(idx);
-    return ret;
-}
-
 let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
 
 cachedTextDecoder.decode();
@@ -72,7 +52,7 @@ function getArrayU8FromWasm0(ptr, len) {
 * @param {Coords} c4
 * @returns {Uint8Array}
 */
-export function crop_image(image_bytes, c1, c2, c3, c4) {
+export function warp_image(image_bytes, c1, c2, c3, c4) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         var ptr0 = passArray8ToWasm0(image_bytes, wasm.__wbindgen_malloc);
@@ -89,7 +69,7 @@ export function crop_image(image_bytes, c1, c2, c3, c4) {
         _assertClass(c4, Coords);
         var ptr4 = c4.ptr;
         c4.ptr = 0;
-        wasm.crop_image(retptr, ptr0, len0, ptr1, ptr2, ptr3, ptr4);
+        wasm.warp_image(retptr, ptr0, len0, ptr1, ptr2, ptr3, ptr4);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var v5 = getArrayU8FromWasm0(r0, r1).slice();
@@ -109,21 +89,6 @@ export function get_dimensions(value) {
     var len0 = WASM_VECTOR_LEN;
     var ret = wasm.get_dimensions(ptr0, len0);
     return Resolution.__wrap(ret);
-}
-
-function addHeapObject(obj) {
-    if (heap_next === heap.length) heap.push(heap.length + 1);
-    const idx = heap_next;
-    heap_next = heap[idx];
-
-    heap[idx] = obj;
-    return idx;
-}
-/**
-* @param {Array<any>} value
-*/
-export function print_points(value) {
-    wasm.print_points(addHeapObject(value));
 }
 
 /**
@@ -270,23 +235,8 @@ async function init(input) {
     }
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbg_log_4c8ee48a7ae1fff2 = function(arg0, arg1) {
-        console.log(getStringFromWasm0(arg0, arg1));
-    };
-    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
-        takeObject(arg0);
-    };
-    imports.wbg.__wbg_get_b7bbf50adcc94294 = function(arg0, arg1) {
-        var ret = getObject(arg0)[arg1 >>> 0];
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbg_length_555f836564bf148d = function(arg0) {
-        var ret = getObject(arg0).length;
-        return ret;
-    };
-    imports.wbg.__wbg_from_f4f6c9225e58242f = function(arg0) {
-        var ret = Array.from(getObject(arg0));
-        return addHeapObject(ret);
+    imports.wbg.__wbg_error_11bf21ae6bb43394 = function(arg0, arg1) {
+        console.error(getStringFromWasm0(arg0, arg1));
     };
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));

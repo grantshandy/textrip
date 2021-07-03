@@ -4,12 +4,12 @@ extern crate js_sys;
 extern crate wasm_bindgen;
 extern crate web_sys;
 
+use wasm_bindgen::prelude::*;
 use std::io::Cursor;
 
+use imageproc::geometric_transformations::{Projection, warp, Interpolation};
+use image::{Rgb, DynamicImage};
 use image::io::Reader as ImageReader;
-use js_sys::Uint8Array;
-use js_sys::Array;
-use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -20,26 +20,24 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub struct Coords {
-    pub x: u32,
-    pub y: u32,
-}
+pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Coords) -> Vec<u8> {
+    let image = match ImageReader::new(Cursor::new(image_bytes))
+        .with_guessed_format() {
+            Ok(data) => data,
+            Err(e) => {
+                log(&format!("{}", e));
+                panic!("");
+            }
+        };
 
-#[wasm_bindgen]
-impl Coords {
-    #[wasm_bindgen(constructor)]
-    pub fn new(x: u32, y: u32) -> Coords {
-        Coords { x, y }
-    }
-}
 
-#[wasm_bindgen]
-pub fn crop_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Coords) -> Vec<u8> {
-    let image = ImageReader::new(Cursor::new(image_bytes))
-        .with_guessed_format()
-        .expect("can't get imagereader from the image")
-        .decode()
-        .expect("can't decode image");
+    let image = match image.decode() {
+            Ok(data) => data,
+            Err(e) => {
+                log(&format!("{}", e));
+                panic!("");
+            }
+        };
 
     let x_coords = [c1.x, c2.x, c3.x, c4.x];
     let y_coords = [c1.y, c2.y, c3.y, c4.y];
@@ -47,13 +45,40 @@ pub fn crop_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
     let max_x = x_coords.iter().max().unwrap();
     let min_y = y_coords.iter().min().unwrap();
     let max_y = y_coords.iter().max().unwrap();
-    log(&format!("min_x: {}, max_x: {}, min_y: {}, max_y: {}", min_x, max_x, min_y, max_y));
 
     let width = max_x - min_x;
     let height = max_y - min_y;
     let cropped_image = image.crop_imm(*min_x, *min_y, width, height);
+
+    let image_buffer = match cropped_image.as_rgb8() {
+        Some(data) => data,
+        None => {
+            log("error creating the buffer");
+            panic!("");
+        }
+    };
+    let projection = match Projection::from_control_points(
+        [(c1.x as f32, c1.y as f32), (c2.x as f32, c2.y as f32), (c3.x as f32, c3.y as f32), (c4.x as f32, c4.y as f32)],
+        [(*min_x as f32, *max_y as f32), (*max_x as f32, *max_y as f32), (*max_x as f32, *min_y as f32), (*min_x as f32, *min_x as f32)]
+    ) {
+        Some(data) => data,
+        None => {
+            log("error creating the Projection");
+            panic!("");
+        }
+    };
+
+    let warped_image = warp(
+        &image_buffer,
+        &projection,
+        Interpolation::Nearest,
+        Rgb([0, 0, 0])
+    );
+
+    let warped_image = DynamicImage::ImageRgb8(warped_image);
+
     let mut bytes: Vec<u8> = Vec::new();
-    cropped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
+    warped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
     bytes
 }
 
@@ -69,38 +94,21 @@ pub fn get_dimensions(value: &[u8]) -> Resolution {
 }
 
 #[wasm_bindgen]
-pub fn print_points(value: Array) {
-    let value = value.to_vec();
-
-    for x in value {
-        let array = Array::from(&x);
-
-
-    }
-}
-
-pub fn invert(value: &[u8]) -> Vec<u8> {
-    let image = ImageReader::new(Cursor::new(value))
-        .with_guessed_format()
-        .expect("can't get imagereader from the image");
-
-    let mut image = match image.decode() {
-        Ok(data) => data,
-        Err(error) => panic!("{}", error),
-    };
-
-    image.invert();
-
-    let mut bytes: Vec<u8> = Vec::new();
-    image
-        .write_to(&mut bytes, image::ImageOutputFormat::Png)
-        .expect("Can write to png");
-
-    return bytes;
-}
-
-#[wasm_bindgen]
 pub struct Resolution {
     pub width: u32,
     pub height: u32,
+}
+
+#[wasm_bindgen]
+pub struct Coords {
+    pub x: u32,
+    pub y: u32,
+}
+
+#[wasm_bindgen]
+impl Coords {
+    #[wasm_bindgen(constructor)]
+    pub fn new(x: u32, y: u32) -> Coords {
+        Coords { x, y }
+    }
 }

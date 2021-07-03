@@ -1,0 +1,27 @@
+@import "./vulf-sans/stylesheet.css";
+
+body {
+  background-color: #292929;
+  color: #eeeeec;
+  text-align: center;
+  font-family: 'Vulf Sans Embedded';
+}
+
+#ripper {
+  border: 1px solid #eeeeec;
+  float: left;
+}
+
+.controls {
+  display: inline-block;
+}
+
+#work {
+  align-items: center;
+  display: inline-block;
+}
+
+#work .canvas-container {
+  float: left;
+  padding-right: 20px;
+}

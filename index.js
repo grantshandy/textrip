@@ -1,4 +1,4 @@
-import init, {Coords, crop_image, get_dimensions, print_points} from './wasm/wasm.js';
+import init, {Coords, warp_image, get_dimensions} from './wasm/wasm.js';
 
 const canvas = new fabric.Canvas('ripper', { selection: false });
 
@@ -144,11 +144,11 @@ let imageBytes = null;
       alert("Please select an image to crop.");
       return;
     }
-    let croppedImage = crop_image(imageBytes,
-                                  coords(topLeftCircle),
-                                  coords(topRightCircle),
-                                  coords(bottomLeftCircle),
-                                  coords(bottomRightCircle));
+    let croppedImage = warp_image(imageBytes,
+                        coords(topLeftCircle),
+                        coords(topRightCircle),
+                        coords(bottomLeftCircle),
+                        coords(bottomRightCircle));
     const file = new File([croppedImage.buffer], "preview.png", {type: 'image/png'});
     const croppedImageUrl = URL.createObjectURL(file)
     document.getElementById('preview').src = croppedImageUrl;
