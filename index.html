@@ -17,6 +17,7 @@
 
       #ripper {
         border: 1px solid #eeeeec;
+        float: left;
       }
 
       .controls {
@@ -26,6 +27,11 @@
       #work {
         align-items: center;
         display: inline-block;
+      }
+
+      #work .canvas-container {
+        float: left;
+        padding-right: 20px;
       }
 
     </style>
@@ -40,140 +46,12 @@
       <canvas id="ripper" width="400" height="400"></canvas>
       <img id="preview">
     </div>
+    <div>
+      <button id='crop-button'>Crop to selection</button>
+    </div>
 
     <p id="resolution"></p>
 
-    <script type="module">
-      import init, {run, get_dimensions, print_points} from './wasm/wasm.js';
-
-      const canvas = new fabric.Canvas('ripper', { selection: false });
-
-      fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
-
-      function makeCircle(left, top, line1, line2) {
-        var c = new fabric.Circle({
-          left: left,
-          top: top,
-          strokeWidth: 2,
-          radius: 6,
-          fill: '#292929',
-          stroke: '#eeeeec'
-        });
-        c.hasControls = c.hasBorders = false;
-
-        c.line1 = line1;
-        c.line2 = line2;
-
-        return c;
-      }
-
-      function makeLine(coords) {
-        return new fabric.Line(coords, {
-          stroke: '#eeeeec',
-          strokeWidth: 2,
-          selectable: false,
-          evented: false,
-        });
-      }
-
-      const canvasObjects = [];
-
-      function addToCanvas(fabricObject) {
-        canvas.add(fabricObject);
-        canvasObjects.push(fabricObject);
-      }
-
-      function clearCanvasObjects() {
-        canvasObjects.forEach(function (canvasObject) {
-          canvas.remove(canvasObject);
-        });
-      }
-
-      function initializeControls(width, height) {
-        clearCanvasObjects();
-
-        var topHeight = height / 4;
-        var bottomHeight = (height / 4) * 3;
-        var rightWidth = (width / 4) * 3;
-        var leftWidth = width / 4;
-
-        const topLine = makeLine([leftWidth, topHeight, rightWidth, topHeight]);
-        const rightLine = makeLine([rightWidth, topHeight, rightWidth, bottomHeight]);
-        const bottomLine = makeLine([rightWidth, bottomHeight, leftWidth, bottomHeight]);
-        const leftLine = makeLine([leftWidth, bottomHeight, leftWidth, topHeight]);
-
-        addToCanvas(topLine);
-        addToCanvas(leftLine);
-        addToCanvas(rightLine);
-        addToCanvas(bottomLine);
-
-        const topLeftCircle = makeCircle(topLine.get('x1'), topLine.get('y1'), topLine, leftLine);
-        const topRightCircle = makeCircle(topLine.get('x2'), topLine.get('y2'), rightLine, topLine);
-        const bottomLeftCircle = makeCircle(bottomLine.get('x2'), bottomLine.get('y2'), leftLine, bottomLine);
-        const bottomRightCircle = makeCircle(bottomLine.get('x1'), bottomLine.get('y1'), bottomLine, rightLine);
-
-        addToCanvas(topLeftCircle);
-        addToCanvas(topRightCircle);
-        addToCanvas(bottomLeftCircle);
-        addToCanvas(bottomRightCircle);
-
-        canvas.renderAll();
-      }
-
-      canvas.on('object:moving', function(e) {
-        var p = e.target;
-        p.line1 && p.line1.set({
-          x1: p.left,
-          y1: p.top,
-        });
-
-        p.line2 && p.line2.set({
-          x2: p.left,
-          y2: p.top,
-        });
-
-        canvas.renderAll();
-      });
-
-      function getPoints() {
-        var topLeft = [topLeftCircle.left, topLeftCircle.top];
-        var topRight = [topRightCircle.left, topRightCircle.top];
-        var bottomLeft = [bottomLeftCircle.left, bottomLeftCircle.top];
-        var bottomRight = [bottomRightCircle.left, bottomRightCircle.top];
-
-        print_points([topLeft, topRight, bottomLeft, bottomRight]);
-      }
-
-      (async () => {
-        await init();
-
-        initializeControls(canvas.width, canvas.height);
-
-        var button = document.getElementById('button');
-
-        button.addEventListener('input', (event) => {
-          let file = event.target.files[0];
-
-          const reader = new FileReader();
-
-          reader.readAsArrayBuffer(file);
-
-          reader.onloadend = function() {
-            const bytes = new Uint8Array(reader.result);
-
-            const file = new File([bytes.buffer], "output.png", {type: 'image/png'});
-
-            let resolution = get_dimensions(bytes);
-            fabric.Image.fromURL(URL.createObjectURL(file), function (image) {
-              canvas.setDimensions({width: resolution.width, height: resolution.height});
-              canvas.setBackgroundImage(image, function () { initializeControls(resolution.width, resolution.height) }, {
-                originX: 'left',
-                originY: 'top'
-              });
-            });
-          };
-        });
-      })();
-    </script>
+    <script src="./index.js" type="module"></script>
   </body>
 </html>

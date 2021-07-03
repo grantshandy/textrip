@@ -20,30 +20,41 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn run(value: &[u8]) -> Uint8Array {
-    let dimensions = get_dimensions(value);
+pub struct Coords {
+    pub x: u32,
+    pub y: u32,
+}
 
-    let x = dimensions.width;
-    let y = dimensions.height;
+#[wasm_bindgen]
+impl Coords {
+    #[wasm_bindgen(constructor)]
+    pub fn new(x: u32, y: u32) -> Coords {
+        Coords { x, y }
+    }
+}
 
-    let message = format!("({}, {})", x, y);
+#[wasm_bindgen]
+pub fn crop_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Coords) -> Vec<u8> {
+    let image = ImageReader::new(Cursor::new(image_bytes))
+        .with_guessed_format()
+        .expect("can't get imagereader from the image")
+        .decode()
+        .expect("can't decode image");
 
-    log(&message);
+    let x_coords = [c1.x, c2.x, c3.x, c4.x];
+    let y_coords = [c1.y, c2.y, c3.y, c4.y];
+    let min_x = x_coords.iter().min().unwrap();
+    let max_x = x_coords.iter().max().unwrap();
+    let min_y = y_coords.iter().min().unwrap();
+    let max_y = y_coords.iter().max().unwrap();
+    log(&format!("min_x: {}, max_x: {}, min_y: {}, max_y: {}", min_x, max_x, min_y, max_y));
 
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let body = document.body().expect("document should have a body");
-
-    let resolution = body
-        .children()
-        .named_item("resolution")
-        .expect("couldn't find resolution");
-    resolution.set_text_content(Some(&message));
-
-    let value: Uint8Array = invert(value).as_slice().into();
-    // let file = File::new_with_u8_array_sequence(value, "output.png").unwrap();
-
-    return value;
+    let width = max_x - min_x;
+    let height = max_y - min_y;
+    let cropped_image = image.crop_imm(*min_x, *min_y, width, height);
+    let mut bytes: Vec<u8> = Vec::new();
+    cropped_image.write_to(&mut bytes, image::ImageOutputFormat::Png).expect("Can write to png");
+    bytes
 }
 
 #[wasm_bindgen]
@@ -53,7 +64,7 @@ pub fn get_dimensions(value: &[u8]) -> Resolution {
         .expect("can't get imagereader from the image");
 
     let (width, height) = image.into_dimensions().unwrap();
-    
+
     return Resolution { width, height };
 }
 
@@ -64,7 +75,7 @@ pub fn print_points(value: Array) {
     for x in value {
         let array = Array::from(&x);
 
-        
+
     }
 }
 
