@@ -138,19 +138,19 @@ let imageBytes = null;
     };
   });
 
-  const cropButton = document.getElementById('crop-button');
-  cropButton.onclick = (event) => {
+  const ripTextureButton = document.getElementById('rip-texture-button');
+  ripTextureButton.onclick = (event) => {
     if (!imageBytes) {
-      alert("Please select an image to crop.");
+      alert("Please select an image first.");
       return;
     }
-    let croppedImage = warp_image(imageBytes,
-                        coords(topLeftCircle),
-                        coords(topRightCircle),
-                        coords(bottomLeftCircle),
-                        coords(bottomRightCircle));
-    const file = new File([croppedImage.buffer], "preview.png", {type: 'image/png'});
-    const croppedImageUrl = URL.createObjectURL(file)
-    document.getElementById('preview').src = croppedImageUrl;
+    let rippedImage = warp_image(imageBytes,
+                                 coords(topLeftCircle),
+                                 coords(topRightCircle),
+                                 coords(bottomLeftCircle),
+                                 coords(bottomRightCircle));
+    const file = new File([rippedImage.buffer], "preview.png", {type: 'image/png'});
+    const rippedImageUrl = URL.createObjectURL(file)
+    document.getElementById('preview').src = rippedImageUrl;
   };
 })();
