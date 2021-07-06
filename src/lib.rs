@@ -34,11 +34,11 @@ pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
     let min_y = y_coords.iter().min().unwrap();
     let max_y = y_coords.iter().max().unwrap();
 
-    let width = max_x - min_x;
-    let height = max_y - min_y;
-    let cropped_image = image.crop_imm(*min_x, *min_y, width, height);
+    // let width = max_x - min_x;
+    // let height = max_y - min_y;
+    // let cropped_image = image.crop_imm(*min_x, *min_y, width, height);
 
-    let image_buffer = cropped_image.as_rgba8().unwrap();
+    let image_buffer = image.into_rgba8();
 
     // [top-left, top-right, bottom-left, bottom-right]
     let projection = Projection::from_control_points(
