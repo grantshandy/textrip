@@ -10,18 +10,24 @@ body {
 #ripper {
   border: 1px solid #eeeeec;
   float: left;
+  width: 50%;
+}
+
+#preview {
+  /* width: 50%; */
 }
 
 .controls {
   display: inline-block;
 }
 
-#work {
+#workspace {
   align-items: center;
   display: inline-block;
+  /* width: 50%; */
 }
 
-#work .canvas-container {
-  float: left;
-  padding-right: 20px;
+#workspace .canvas-container {
+  /* float: left; */
+  /* padding-right: 20px; */
 }

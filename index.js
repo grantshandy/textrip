@@ -1,6 +1,10 @@
-import init, {Coords, warp_image, get_dimensions} from './wasm/wasm.js';
+import init, {Coords, resize_image, warp_image, get_dimensions} from './wasm/wasm.js';
 
 const canvas = new fabric.Canvas('ripper', { selection: false });
+
+document.getElementById('ripper').style.visibility = "hidden";
+document.getElementById('rip-texture-button').style.visibility = "hidden";
+document.getElementById('resize-texture-button').style.visibility = "hidden";
 
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
@@ -93,15 +97,6 @@ canvas.on('object:moving', function(e) {
   canvas.renderAll();
 });
 
-function getPoints() {
-  var topLeft = [topLeftCircle.left, topLeftCircle.top];
-  var topRight = [topRightCircle.left, topRightCircle.top];
-  var bottomLeft = [bottomLeftCircle.left, bottomLeftCircle.top];
-  var bottomRight = [bottomRightCircle.left, bottomRightCircle.top];
-
-  print_points([topLeft, topRight, bottomLeft, bottomRight]);
-}
-
 function coords(circle) {
   return new Coords(circle.left, circle.top);
 }
@@ -113,9 +108,14 @@ let imageBytes = null;
 
   initializeControls(canvas.width, canvas.height);
 
-  var button = document.getElementById('button');
+  const button = document.getElementById('button');
+
+  let resolution = null;
 
   button.addEventListener('input', (event) => {
+    document.getElementById('ripper').style.visibility = "visible";
+    document.getElementById('rip-texture-button').style.visibility = "visible";
+
     let file = event.target.files[0];
 
     const reader = new FileReader();
@@ -127,7 +127,7 @@ let imageBytes = null;
 
       const file = new File([imageBytes.buffer], "output.png", {type: 'image/png'});
 
-      let resolution = get_dimensions(imageBytes);
+      resolution = get_dimensions(imageBytes);
       fabric.Image.fromURL(URL.createObjectURL(file), function (image) {
         canvas.setDimensions({width: resolution.width, height: resolution.height});
         canvas.setBackgroundImage(image, function () { initializeControls(resolution.width, resolution.height) }, {
@@ -138,19 +138,36 @@ let imageBytes = null;
     };
   });
 
+  let rippedImage = null;
+
   const ripTextureButton = document.getElementById('rip-texture-button');
   ripTextureButton.onclick = (event) => {
     if (!imageBytes) {
       alert("Please select an image first.");
       return;
     }
-    let rippedImage = warp_image(imageBytes,
-                                 coords(topLeftCircle),
-                                 coords(topRightCircle),
-                                 coords(bottomLeftCircle),
-                                 coords(bottomRightCircle));
+    
+    rippedImage = warp_image(imageBytes,
+      coords(topLeftCircle),
+      coords(topRightCircle),
+      coords(bottomLeftCircle),
+      coords(bottomRightCircle));
+
     const file = new File([rippedImage.buffer], "preview.png", {type: 'image/png'});
     const rippedImageUrl = URL.createObjectURL(file)
     document.getElementById('preview').src = rippedImageUrl;
+    document.getElementById('resize-texture-button').style.visibility = "visible";
+  };
+
+  const resizeTextureButton = document.getElementById('resize-texture-button');
+  resizeTextureButton.onclick = (event) => {
+
+    const newX = resolution.x - 100;
+    const newY = resolution.y - 100;
+
+    let resizedImage = resize_image(rippedImage, newX, newY);
+    const file = new File([rippedImage.buffer], "preview.png", {type: 'image/png'});
+    const rippedImageUrl = URL.createObjectURL(file)
+    document.getElementById('preview').src = rippedImageUrl;    
   };
 })();

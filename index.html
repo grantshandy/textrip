@@ -5,23 +5,24 @@
     <title>Texture Ripper</title>
     <link rel="shortcut icon" type="image/png" href="icon.png"/>
     <script src="libs/fabric.min.js"></script>
-    <script src="./index.js" type="module"></script>
+    <script src="index.js" type="module"></script>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
-    
-    <input type='file' id='button' multiple accept="image/png">
-    <br>
-    <div id="work">
-      <canvas id="ripper" width="400" height="400"></canvas>
-      <img id="preview">
+    <div>
+      <input type='file' id='button' multiple accept="image/png">
+    </div>
+    <div class="flex-container" id="workspace">
+      <canvas id="ripper" width="50" height="50"></canvas>
+      <div id="tweaking">
+        <img id="preview">
+      </div>
     </div>
     <div>
-      <button id='rip-texture-button'>Rip Texture from Selection</button>
+      <button id='rip-texture-button'>Rip Texture</button>
+      <button id='resize-texture-button'>Resize Texture</button>
     </div>
-
-    <p id="resolution"></p>
   </body>
 </html>

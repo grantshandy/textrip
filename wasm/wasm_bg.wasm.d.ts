@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export function warp_image(a: number, b: number, c: number, d: number, e: number, f: number, g: number): void;
+export function resize_image(a: number, b: number, c: number, d: number, e: number): void;
 export function get_dimensions(a: number, b: number): number;
 export function __wbg_coords_free(a: number): void;
 export function __wbg_get_coords_x(a: number): number;
