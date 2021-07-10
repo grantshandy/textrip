@@ -10,7 +10,7 @@ use wasm_bindgen::prelude::*;
 
 use image::io::Reader as ImageReader;
 use image::imageops;
-use image::{DynamicImage, GenericImageView, Rgba};
+use image::{DynamicImage, Rgba};
 use imageproc::geometric_transformations::{warp, Interpolation, Projection};
 
 #[wasm_bindgen]
@@ -84,15 +84,21 @@ pub fn resize_image(image_bytes: &[u8], nwidth: u32, nheight: u32) -> Vec<u8> {
         .decode()
         .unwrap();
 
+    log("1");
+
     let resized = imageops::resize(&image, nwidth, nheight, imageops::FilterType::Triangle);
+    log("2");
 
     let image = DynamicImage::ImageRgba8(resized);
+    log("3");
 
     let mut bytes: Vec<u8> = Vec::new();
     image
         .write_to(&mut bytes, image::ImageOutputFormat::Png)
         .expect("Can write to png");
-    bytes
+    log("4");
+
+    return bytes;
 }
 
 #[wasm_bindgen]
