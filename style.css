@@ -1,29 +1,47 @@
 @import "./vulf-sans/stylesheet.css";
 
 body {
-  background-color: #292929;
-  color: #eeeeec;
+  background-color: #344648;
+  color: #fbe0c3;
   text-align: center;
   font-family: 'Vulf Sans Embedded';
 }
 
+.uploadButton{
+  display: none;
+}
+
+.uploadLabel {
+  border: 1px solid #fbe0c3;
+  display: inline-block;
+  padding: 7px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #344648;
+  color: #fbe0c3;
+}
+
 #ripper {
-  border: 2px solid #eeeeec;
-  float: left;
+  border: 2px solid #fbe0c3;
   width: 50%;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .controls {
   display: inline-block;
 }
 
-.wrapper {
-  border: 2px solid #eeeeec;
-  margin: auto;
-  position: relative;
-  border-radius: 5px;
-  text-align: center;
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.main {
+  background-color: #7d8e95;
+  width: 50%;
+  height: 60%;
+  background: #7d8e95;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 10px;
 }

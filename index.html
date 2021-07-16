@@ -11,15 +11,20 @@
   <body>
     <h2>Texture Ripper</h2>
     <p>Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.</p>
-    <div>
-      <input type='file' id='button' multiple accept="image/png">
-    </div>
     
-    <div class="wrapper">
+    <div id="main" class="main">
+      <label class="uploadLabel">
+        <input type="file" id="uploadButton" class="uploadButton" multiple accept="image/png"/>
+        Upload
+      </label>
+
       <canvas id="ripper" width="50" height="50"></canvas>
       <img id="preview">
-      <button id='rip-texture-button'>Rip Texture</button>
-      <button id='resize-texture-button'>Resize Texture</button>
+
+      <label class="uploadLabel" id="rip-texture-label">
+        <input type="submit" id="rip-texture-button" class="uploadButton" multiple accept="image/png"/>
+        Rip Texture From Selection
+      </label>
     </div>
   </body>
 </html>

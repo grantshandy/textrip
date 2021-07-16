@@ -10,13 +10,6 @@
 */
 export function warp_image(image_bytes: Uint8Array, c1: Coords, c2: Coords, c3: Coords, c4: Coords): Uint8Array;
 /**
-* @param {Uint8Array} image_bytes
-* @param {number} nwidth
-* @param {number} nheight
-* @returns {Uint8Array}
-*/
-export function resize_image(image_bytes: Uint8Array, nwidth: number, nheight: number): Uint8Array;
-/**
 * @param {Uint8Array} value
 * @returns {Resolution}
 */
@@ -58,7 +51,6 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly warp_image: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly resize_image: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly get_dimensions: (a: number, b: number) => number;
   readonly __wbg_coords_free: (a: number) => void;
   readonly __wbg_get_coords_x: (a: number) => number;

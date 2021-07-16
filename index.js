@@ -1,10 +1,9 @@
-import init, {Coords, resize_image, warp_image, get_dimensions} from './wasm/wasm.js';
+import init, {Coords, warp_image, get_dimensions} from './wasm/wasm.js';
 
 const canvas = new fabric.Canvas('ripper', { selection: false });
 
 document.getElementById('ripper').style.visibility = "hidden";
-document.getElementById('rip-texture-button').style.visibility = "hidden";
-document.getElementById('resize-texture-button').style.visibility = "hidden";
+document.getElementById('rip-texture-label').style.visibility = "hidden";
 
 fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
@@ -14,8 +13,8 @@ function makeCircle(left, top, line1, line2) {
     top: top,
     strokeWidth: 2,
     radius: 6,
-    fill: '#292929',
-    stroke: '#eeeeec'
+    fill: '#7d8e95',
+    stroke: '#ffbb98'
   });
   c.hasControls = c.hasBorders = false;
 
@@ -27,7 +26,7 @@ function makeCircle(left, top, line1, line2) {
 
 function makeLine(coords) {
   return new fabric.Line(coords, {
-    stroke: '#eeeeec',
+    stroke: '#ffbb98',
     strokeWidth: 2,
     selectable: false,
     evented: false,
@@ -108,13 +107,13 @@ let imageBytes = null;
 
   initializeControls(canvas.width, canvas.height);
 
-  const button = document.getElementById('button');
+  const uploadButton = document.getElementById('uploadButton');
 
   let resolution = null;
 
-  button.addEventListener('input', (event) => {
+  uploadButton.addEventListener('input', (event) => {
     document.getElementById('ripper').style.visibility = "visible";
-    document.getElementById('rip-texture-button').style.visibility = "visible";
+    document.getElementById('rip-texture-label').style.visibility = "visible";
 
     let file = event.target.files[0];
 
@@ -128,6 +127,10 @@ let imageBytes = null;
       const file = new File([imageBytes.buffer], "output.png", {type: 'image/png'});
 
       resolution = get_dimensions(imageBytes);
+
+      let mainWidth = resolution.width + 15;
+      document.getElementById('main').style.width = mainWidth;
+
       fabric.Image.fromURL(URL.createObjectURL(file), function (image) {
         canvas.setDimensions({width: resolution.width, height: resolution.height});
         canvas.setBackgroundImage(image, function () { initializeControls(resolution.width, resolution.height) }, {
@@ -156,18 +159,5 @@ let imageBytes = null;
     const file = new File([rippedImage.buffer], "preview.png", {type: 'image/png'});
     const rippedImageUrl = URL.createObjectURL(file)
     document.getElementById('preview').src = rippedImageUrl;
-    document.getElementById('resize-texture-button').style.visibility = "visible";
-  };
-
-  const resizeTextureButton = document.getElementById('resize-texture-button');
-  resizeTextureButton.onclick = (event) => {
-
-    const newX = resolution.x - 100;
-    const newY = resolution.y - 100;
-
-    let resizedImage = resize_image(rippedImage, newX, newY);
-    const file = new File([rippedImage.buffer], "preview.png", {type: 'image/png'});
-    const rippedImageUrl = URL.createObjectURL(file)
-    document.getElementById('preview').src = rippedImageUrl;    
   };
 })();

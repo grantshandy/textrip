@@ -1,7 +1,7 @@
 # Texture Ripper
 Get perspective accurate textures for 3D modeling and graphics from any image in an easy to use website.
 
-[Visit](https://skylinecc.github.io/textrip/)
+[Visit](https://grantshandy.github.io/textrip/)
 
 ## Building
 I just have this here so I can copy paste it :)

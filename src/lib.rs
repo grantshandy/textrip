@@ -9,16 +9,14 @@ use std::io::Cursor;
 use wasm_bindgen::prelude::*;
 
 use image::io::Reader as ImageReader;
-use image::imageops;
 use image::{DynamicImage, Rgba};
+
 use imageproc::geometric_transformations::{warp, Interpolation, Projection};
 
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
-    #[wasm_bindgen(js_namespace = console)]
-    fn error(s: &str);
     fn alert(s: &str);
 }
 
@@ -74,31 +72,6 @@ pub fn warp_image(image_bytes: &[u8], c1: Coords, c2: Coords, c3: Coords, c4: Co
         .write_to(&mut bytes, image::ImageOutputFormat::Png)
         .expect("Can write to png");
     return bytes
-}
-
-#[wasm_bindgen]
-pub fn resize_image(image_bytes: &[u8], nwidth: u32, nheight: u32) -> Vec<u8> {
-    let image = ImageReader::new(Cursor::new(image_bytes))
-        .with_guessed_format()
-        .unwrap()
-        .decode()
-        .unwrap();
-
-    log("1");
-
-    let resized = imageops::resize(&image, nwidth, nheight, imageops::FilterType::Triangle);
-    log("2");
-
-    let image = DynamicImage::ImageRgba8(resized);
-    log("3");
-
-    let mut bytes: Vec<u8> = Vec::new();
-    image
-        .write_to(&mut bytes, image::ImageOutputFormat::Png)
-        .expect("Can write to png");
-    log("4");
-
-    return bytes;
 }
 
 #[wasm_bindgen]
